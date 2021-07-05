@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Scrabble Mini</string>
+    <string name="random_word">Random word</string>
+    <string name="check">Check</string>
+    <string name="enter_your_guess">Enter your guess</string>
+    <string name="s">some</string>
+</resources>
