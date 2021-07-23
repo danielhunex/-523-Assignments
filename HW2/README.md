@@ -10,7 +10,7 @@ Little Camera is the app I wrote for the Homework 2. It has the following featur
 ![Home](images/home.png)
 Screenshot showing home screen ( screenshot take from my phone)
 
-![Edited](images/edited.png=200x400)
+![Edited](images/edited.png =60x100)
 
 Screenshot showing edited photo
 
