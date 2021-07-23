@@ -1,4 +1,5 @@
-# Little Camera: Homework 2 mobile App
+ *Daniel Hunegnaw <dhuneg@uw.edu>*
+ **Little Camera**: *a small camera app that takes photos via intent with navigation capability of taken photoes and has the ability to edit the photo i.e. adds 'UW EE 523' text to the picture*
 
 Little Camera is the app I wrote for the Homework 2. It has the following features.
 - **Take a Picture**: Using the camera intent, the app takes a pictures and saves it to its own data folder. The button **Take a Photo** is used to take pictures
