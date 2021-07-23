@@ -10,14 +10,13 @@ Little Camera is the app I wrote for the Homework 2. It has the following featur
 - **Editing**: The app has an **Edit** button to edit the **Current picture/photo** being previewed. You can use the **Next** or **Prev** button to preview another picture and edit it. The **Edit** functionality opens another activity passing the path of the current photo being previewed. The Editor activity adds the text **UW EE 523** in purple color to the image. However, it does not save it to the file
 -Various screenshots are shown below
 
-![Home](images/home.png)
+![Home](images/home.png)<br /> 
 Screenshot showing home screen ( screenshot take from my phone)
 
-![Edited](images/edited.png)
+![Edited](images/edited.png)<br /> 
 Screenshot showing edited photo
 
-![Multiple photos](images/multiple_photo.png)
-
+![Multiple photos](images/multiple_photo.png)<br /> 
 Screenshot showing Prev and Next button enabled -> meaning there are at least three photoes taken by the app
 
 **Designed and implemented by** : Daniel Hunegnaw
