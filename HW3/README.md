@@ -1,6 +1,6 @@
  *Daniel Hunegnaw <dhuneg@uw.edu>*
  
- **HW3*: *a small camera app that takes two photos via intent with face contour detection capability, swap the contour of faces detected, and has the ability to navigate to an edit page where you can blur the original photo. In addition, it retains the photoes upon configuration changes such as rotation of the phone, and you can also clear the face-swapped or blurred photo back to the original
+ **HW3**: a small camera app that takes two photos via intent with face contour detection capability, swap the contour of faces detected, and has the ability to navigate to an edit page where you can blur the original photo. In addition, it retains the photoes upon configuration changes such as rotation of the phone, and you can also clear the face-swapped or blurred photo back to the original
 
 HW3 is the app I wrote for the Homework 3. It has the following features.
 - **Take a Picture**: Using the camera intent, the app takes a pictures and saves it to its own data folder. The button **Capture** is used to take two pictures. The picture taken are display on top of each other with scrollbar feature
