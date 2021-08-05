@@ -17,9 +17,10 @@ class DrawviewSimulation : AppCompatActivity() {
 
 
         _drawView = findViewById(R.id.draw_view)
+        _drawView?.setStrokeWidth(100.0f)
+        _drawView?.setColor(Color.WHITE)
 
         val imagePath = intent.getStringExtra("pathOfPictureToEdit")
-
 
         // Will run after every stroke drew
         _drawView?.setOnTouchListener { _, event ->
@@ -30,6 +31,7 @@ class DrawviewSimulation : AppCompatActivity() {
             if (event.action == MotionEvent.ACTION_UP) {
                 //action goes here
                   Toast.makeText(this,"Drawview is cool", Toast.LENGTH_SHORT).show()
+
             }
             true
         }
@@ -39,8 +41,7 @@ class DrawviewSimulation : AppCompatActivity() {
     fun showBackground(path:String?)
     {
         var helper = PictureHelper()
-        _drawView?.setStrokeWidth(100.0f)
-        _drawView?.setColor(Color.WHITE)
+
         _drawView?.background= BitmapDrawable(getResources(), helper.resize(helper.getImage(path)));
     }
 }
