@@ -9,8 +9,7 @@ HW3 is the app I wrote for the Homework 3. It has the following features.
   -  **clear Button**: Resets the photos back to the original after face swap
   - **Go To Edit Button**: Takes you to the Edit page where you can blur first photo taken
 - **Editing**: On the Edit page. Duplicates of the first photo are shown stacking vertically. One is used to compare after the other is blurred.
-  - **Blur Button** : blurs the photo on the top image view, you can see how it is blurred with the reference original photo shown below the blurred one. For blurring, I found this library to be simple
-  - and effect (https://github.com/wasabeef/Blurry) and I used this library
+  - **Blur Button** : blurs the photo on the top image view, you can see how it is blurred with the reference original photo shown below the blurred one. For blurring, I found this library to be simple  and effect (https://github.com/wasabeef/Blurry), and therefore, I used it
   - **Clear Button **: Clears the blurred photo back to the original
   - **Go to Main Button** : it takes you back to the main page/view
 -Various screenshots are shown below
