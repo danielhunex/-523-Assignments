@@ -96,7 +96,13 @@
             android:id="@+id/button_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="3dp"
             android:text="@string/go_to_edit"></Button>
+        <Button
+            android:id="@+id/button_drawView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="To DrawView"></Button>
     </LinearLayout>
 
     </LinearLayout>

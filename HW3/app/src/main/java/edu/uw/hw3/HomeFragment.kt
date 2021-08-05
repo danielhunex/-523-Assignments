@@ -118,6 +118,13 @@ class HomeFragment : Fragment() {
             startCameraIntent()
         }
 
+        // To drawview view
+
+        binding.buttonDrawView.setOnClickListener{
+            val intent = Intent(activity, DrawviewSimulation::class.java)
+            intent.putExtra("pathOfPictureToEdit", _firstPhotoPath +"")
+            startActivity(intent)
+        }
         // back/clear to the original photo
         binding.buttonClear.setOnClickListener()
         {
