@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">hw3</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">Fun with Photos</string>
+    <string name="second_fragment_label">Edit Photos</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="capture">Capture</string>
+    <string name="swap">Swap</string>
+    <string name="clear">Clear</string>
+    <string name="blur_first_original_photo">Blur first original photo</string>
+    <string name="go_to_main">Go to Main</string>
+    <string name="go_to_edit">Go to Edit</string>
+    <string name="blur">Blur</string>
+</resources>
