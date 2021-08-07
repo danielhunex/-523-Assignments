@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/nav_settings"
+        android:name="edu.uw.fallalarm.ui.emergencycontact.EmergencyContactFragment"
+        android:label="@string/menu_emergency_contact"
+        tools:layout="@layout/emergencycontact_fragment" />
+
+    <fragment
         android:id="@+id/nav_gallery"
         android:name="edu.uw.fallalarm.ui.gallery.GalleryFragment"
         android:label="@string/menu_gallery"
