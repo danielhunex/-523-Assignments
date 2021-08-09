@@ -178,7 +178,7 @@ class HomeFragment : Fragment() {
             return
         }
         val pixels =
-            IntArray((face1?.boundingBox?.height() ?: 0) * (face1?.boundingBox?.width() ?: 0))
+            IntArray(fromPhoto!!.height  * fromPhoto!!.width)
 
         //get the face boundary from photo 1
         face1?.boundingBox?.let {
