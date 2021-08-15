@@ -1,6 +1,8 @@
 package edu.uw.fallalarm.service
 
 import android.Manifest
+import android.R.attr.x
+import android.R.attr.y
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -96,6 +98,13 @@ class FallDetectorService : Service(), SensorEventListener {
 
         Timer().scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
+                notifyHeartBeat()
+            }
+        }, 1000, 2000)
+
+        Timer().scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+
 
                 var x: Double = _acceleration[0].toDouble()
                 var y: Double = _acceleration[1].toDouble()
@@ -134,6 +143,12 @@ class FallDetectorService : Service(), SensorEventListener {
         }, 1000, 30)
 
         return START_STICKY
+    }
+
+    private fun notifyHeartBeat() {
+        val intent = Intent("edu.uw.status.transfer")
+        intent.putExtra("heartbeat", "1")
+        sendBroadcast(intent)
     }
 
     private fun updateHistory(latitude: Double?, longitude: Double?) {

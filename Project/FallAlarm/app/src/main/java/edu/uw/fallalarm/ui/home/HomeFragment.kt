@@ -6,7 +6,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import edu.uw.fallalarm.databinding.FragmentHomeBinding
 import edu.uw.fallalarm.service.FallDetectorService
+import java.util.*
 
 
 class HomeFragment : Fragment() {
@@ -72,14 +76,22 @@ class HomeFragment : Fragment() {
             context?.stopService(intent)
             toggleStart(false)
         }
-
+        val filter = IntentFilter()
+        filter.addAction("edu.uw.status.transfer")
         _backgroundMessageReciever = object : BroadcastReceiver() {
             override fun onReceive(p0: Context?, intent: Intent?) {
                 val b: Bundle? = intent?.extras
-                val yourValue = b?.getString("heartbeat")
-                binding.textHome.text = yourValue + ""
+                val value = b?.getString("heartbeat")
+                binding.textHome.setBackgroundColor(Color.RED)
+                if (value != null && value == "1") {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        binding.textHome.setBackgroundColor(Color.GREEN)
+                    }, 1000)
+                }
             }
         }
+
+        context?.registerReceiver(_backgroundMessageReciever, filter)
     }
 
 
