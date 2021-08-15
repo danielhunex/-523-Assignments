@@ -1,13 +1,34 @@
 package edu.uw.fallalarm.ui.home
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import edu.uw.fallalarm.database.*
+import edu.uw.fallalarm.ui.emergencycontact.EmergencyContactViewModel
+import java.util.*
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel : AndroidViewModel {
+    private val TAG = HomeViewModel::class.java.simpleName
+    private var _histories: LiveData<List<HistoryEntity>>? = null
+    private var _historyRepository: HistoryRepository
+    private var _text: LiveData<String>? = null
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    constructor(application: Application) : super(application) {
+
+        val database = AppDatabase.getInstance(application!!.applicationContext)
+        _historyRepository = HistoryRepository(database!!)
+
     }
-    val text: LiveData<String> = _text
+
+    fun getHistories(): LiveData<List<HistoryEntity>>? {
+        _histories = _historyRepository?.getHistories()
+        return _histories
+    }
+
+    fun getText(): LiveData<String>? {
+        return _text
+    }
+
 }

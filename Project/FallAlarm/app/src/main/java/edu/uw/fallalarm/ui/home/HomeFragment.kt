@@ -1,149 +1,109 @@
 package edu.uw.fallalarm.ui.home
 
+
+import android.R
+import android.content.BroadcastReceiver
 import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import edu.uw.fallalarm.R
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import edu.uw.fallalarm.databinding.FragmentHomeBinding
-import java.io.File
-import kotlin.math.log
-import kotlin.math.pow
-import kotlin.math.sqrt
+import edu.uw.fallalarm.service.FallDetectorService
 
-class HomeFragment : Fragment(), SensorEventListener {
 
-    private lateinit var homeViewModel: HomeViewModel
+class HomeFragment : Fragment() {
+
     private var _binding: FragmentHomeBinding? = null
-    private var gravity = FloatArray(3) { 0F }
-    private var linear_acceleration = FloatArray(3) { 0F }
-    private var resume = true
-    private lateinit var _sensorManager: SensorManager
-    private lateinit var _accelerometer: Sensor
-    private  var history: MutableList<Double> = mutableListOf()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private var _started = false
+    private lateinit var _homeViewModel: HomeViewModel
+
+    private var _backgroundMessageReciever: BroadcastReceiver? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-        homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+        _homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
         val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
+        _homeViewModel.getText()?.observe(viewLifecycleOwner, {
             textView.text = it
         })
 
-        binding.btnSave.setOnClickListener {
+        _homeViewModel.getHistories()?.observe(viewLifecycleOwner, {
 
-            val mediaStorageDir = activity?.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-            if (mediaStorageDir != null && !mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-               Log.d("data","Unable to create folder ${mediaStorageDir}")
-            }
-            Log.d("Photo Directory", mediaStorageDir?.absolutePath + "")
-            //create file for the picture
-            var file = File(mediaStorageDir?.absolutePath + "/data.txt")
+            var histories: List<String?> = it.map { it.getMessage() }
 
+            val adapter = ArrayAdapter(requireContext(), R.layout.simple_list_item_1, histories)
+            binding.listviewHistory.adapter = adapter
+        })
+        toggleStart(false)
 
-            file.printWriter().use { out ->
-                history.forEach {
-                    out.println("$it")
-                }
-            }
-        }
-
-        _sensorManager = activity?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        _accelerometer = _sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         return root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.btnStart.setOnClickListener {
+            val intent = Intent(context, FallDetectorService::class.java)
+            context?.startService(intent)
+            toggleStart(true)
+        }
 
-    override fun onSensorChanged(event: SensorEvent) {
-        // In this example, alpha is calculated as t / (t + dT),
-        // where t is the low-pass filter's time-constant and
-        // dT is the event delivery rate.
-        val alpha: Float = 0.8f
-        if (event != null && resume) {
-
-            if(event.sensor.type == Sensor.TYPE_ACCELEROMETER)
-            {
-                var x:Double = event.values[0].toDouble()
-                var y:Double= event.values   [1].toDouble()
-                var z:Double = event.values[2].toDouble()
-
-                var mag = sqrt(x.pow(2.0) + y.pow(2.0) + z.pow(2.0))
-                history.add(mag)
-                binding.textHome.text = mag.toString()
-
+        binding.btnStop.setOnClickListener {
+            val intent = Intent(context, FallDetectorService::class.java).also {
+                it.action = "updates"
             }
-        /*    if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+            context?.stopService(intent)
+            toggleStart(false)
+        }
 
-                // Isolate the force of gravity with the low-pass filter.
-                gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0]
-                gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1]
-                gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2]
-
-                // Remove the gravity contribution with the high-pass filter.
-                linear_acceleration[0] = event.values[0] - gravity[0]
-                linear_acceleration[1] = event.values[1] - gravity[1]
-                linear_acceleration[2] = event.values[2] - gravity[2]
-
-                var magnitude = Math.sqrt(
-                    Math.pow(
-                        linear_acceleration[0].toDouble(), 2.0)+
-                        Math.pow(linear_acceleration[1].toDouble(), 2.0)+
-                        Math.pow(linear_acceleration[2].toDouble(), 2.0))
-
-                           binding.textHome.text =
-                        "x: ${linear_acceleration[0]}, y:${linear_acceleration[1]}, z:${linear_acceleration[2]}   Magnitude: ${magnitude}"
-            }*/
+        _backgroundMessageReciever = object : BroadcastReceiver() {
+            override fun onReceive(p0: Context?, intent: Intent?) {
+                val b: Bundle? = intent?.extras
+                val yourValue = b?.getString("heartbeat")
+                binding.textHome.text = yourValue + ""
+            }
         }
     }
 
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        Log.d("Not yet implemented", "Not implemented")
-    }
 
     override fun onResume() {
         super.onResume()
-        _sensorManager.registerListener(this, _accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        val intentFilter = IntentFilter("updates")
+        _backgroundMessageReciever?.let {
+            LocalBroadcastManager.getInstance(requireContext()).registerReceiver(it, intentFilter)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        _sensorManager.unregisterListener(this)
+        if (_backgroundMessageReciever != null)
+            context?.let {
+                LocalBroadcastManager.getInstance(it)
+                    .unregisterReceiver(_backgroundMessageReciever!!)
+            }
+        _backgroundMessageReciever = null
     }
 
-    fun resumeReading(view: View) {
-        this.resume = true
-    }
-
-    fun pauseReading(view: View) {
-        this.resume = false
+    private fun toggleStart(toggle: Boolean) {
+        _started = toggle
+        binding.btnStop.isEnabled = _started
+        binding.btnStart.isEnabled = !_started
     }
 }

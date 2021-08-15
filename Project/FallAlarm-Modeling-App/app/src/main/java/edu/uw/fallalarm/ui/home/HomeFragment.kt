@@ -34,7 +34,7 @@ class HomeFragment : Fragment(), SensorEventListener {
     private lateinit var _sensorManager: SensorManager
     private lateinit var _accelerometer: Sensor
     private  var history: MutableList<Double> = mutableListOf()
-
+private var _time:Long =0
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -88,7 +88,8 @@ class HomeFragment : Fragment(), SensorEventListener {
         // where t is the low-pass filter's time-constant and
         // dT is the event delivery rate.
         val alpha: Float = 0.8f
-        if (event != null && resume) {
+        var diff = System.currentTimeMillis() -_time
+        if (event != null && diff>1000) {
 
             if(event.sensor.type == Sensor.TYPE_ACCELEROMETER)
             {
@@ -99,6 +100,7 @@ class HomeFragment : Fragment(), SensorEventListener {
                 var mag = sqrt(x.pow(2.0) + y.pow(2.0) + z.pow(2.0))
                 history.add(mag)
                 binding.textHome.text = mag.toString()
+                _time = System.currentTimeMillis()
 
             }
         /*    if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
