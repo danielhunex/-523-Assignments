@@ -16,16 +16,4 @@
         android:name="edu.uw.fallalarm.ui.emergencycontact.EmergencyContactFragment"
         android:label="@string/menu_emergency_contact"
         tools:layout="@layout/emergencycontact_fragment" />
-
-    <fragment
-        android:id="@+id/nav_gallery"
-        android:name="edu.uw.fallalarm.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="edu.uw.fallalarm.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
 </navigation>

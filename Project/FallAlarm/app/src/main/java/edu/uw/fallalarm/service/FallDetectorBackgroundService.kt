@@ -183,7 +183,7 @@ class FallDetectorService : Service(), SensorEventListener {
         super.onDestroy()
 
         Log.d(TAG, "Cleaning up resources")
-        _sensorManager?.unregisterListener(this)
+        _sensorManager.unregisterListener(this)
 
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED

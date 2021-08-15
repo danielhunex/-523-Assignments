@@ -70,9 +70,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.btnStop.setOnClickListener {
-            val intent = Intent(context, FallDetectorService::class.java).also {
-                it.action = "updates"
-            }
+            val intent = Intent(context, FallDetectorService::class.java)
             context?.stopService(intent)
             toggleStart(false)
         }

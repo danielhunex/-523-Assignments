@@ -6,7 +6,7 @@ class ContactRepository(var database: AppDatabase) {
     private var contact: LiveData<ContactEntity>? = null
 
     fun getEmergencyContact():ContactEntity?{
-        return database?.contactDao?.getEmergencyContact()
+        return database.contactDao?.getEmergencyContact()
     }
     fun getContact(): LiveData<ContactEntity>? {
         contact = database.contactDao?.getContact()
