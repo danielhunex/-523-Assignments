@@ -90,6 +90,7 @@ class FallDetectorService : Service(), SensorEventListener {
         _longitude =
             _locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)?.longitude
 
+        onTaskRemoved(intent)
         _sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         _accelerometerSensor = _sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         _sensorManager.registerListener(this,
@@ -120,7 +121,7 @@ class FallDetectorService : Service(), SensorEventListener {
                     if (_currentAccelerationMagnitude >= UPPER_THRESHOLD) {
                         var interval = System.currentTimeMillis() - _lowerTime
 
-                        if (interval in 500..10000) //Fall is detected
+                        if (interval in 500..1000) //Fall is detected
                         {
                             if (_phoneNumber != null) {
 
@@ -140,7 +141,7 @@ class FallDetectorService : Service(), SensorEventListener {
                     }
                 }
             }
-        }, 1000, 30)
+        }, 1000, 20)
 
         return START_STICKY
     }
