@@ -41,8 +41,6 @@ class FallDetectorService : Service(), SensorEventListener {
     private var _database: AppDatabase? = null
     private var _contactRepository: ContactRepository? = null
     private var _historyRepository: HistoryRepository? = null
-    private var _handler: Handler = Handler(Looper.getMainLooper())
-    private var _previousAccelerationMagnitude: Double = 9.8
     private var _currentAccelerationMagnitude: Double = 9.8
     private val LOWER_THRESHOLD: Double = 2.5 // lower acceleration threshold in m/s2
     private val UPPER_THRESHOLD: Double = 10.0 // upper acceleration threshold in m/s2
@@ -50,7 +48,6 @@ class FallDetectorService : Service(), SensorEventListener {
     private var _phoneNumber: String? = null
     private var _lowerThreshholdHit = false
     private var _lowerTime: Long = 0
-    private lateinit var _runnable: Runnable
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -58,6 +55,8 @@ class FallDetectorService : Service(), SensorEventListener {
         _database = AppDatabase.getInstance(applicationContext)
         _contactRepository = ContactRepository(_database!!)
         _historyRepository = HistoryRepository(_database!!)
+        _sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        _accelerometerSensor = _sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
         var contact = _contactRepository!!.getEmergencyContact()
         //TODO: validate and show message if the user has not set a contact
@@ -72,11 +71,7 @@ class FallDetectorService : Service(), SensorEventListener {
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
         ) {
-            _handler.post {
-                Toast.makeText(applicationContext,
-                    "GPS Permission Not granted!!",
-                    Toast.LENGTH_SHORT).show()
-            }
+            Log.d(TAG, "GPS Permission Not granted!!")
         }
 
         _locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
@@ -84,6 +79,7 @@ class FallDetectorService : Service(), SensorEventListener {
             0.0F,
             _locationListener!!)
 
+        //initially set the values of the location
         _latitude =
             _locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)?.latitude
 
@@ -91,8 +87,7 @@ class FallDetectorService : Service(), SensorEventListener {
             _locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)?.longitude
 
         onTaskRemoved(intent)
-        _sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        _accelerometerSensor = _sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
         _sensorManager.registerListener(this,
             _sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
             SensorManager.SENSOR_DELAY_FASTEST)
@@ -103,9 +98,9 @@ class FallDetectorService : Service(), SensorEventListener {
             }
         }, 1000, 2000)
 
+        //run the fall detect algorithm in a schedule
         Timer().scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-
 
                 var x: Double = _acceleration[0].toDouble()
                 var y: Double = _acceleration[1].toDouble()
@@ -163,7 +158,6 @@ class FallDetectorService : Service(), SensorEventListener {
             Date()))
     }
 
-
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -178,7 +172,6 @@ class FallDetectorService : Service(), SensorEventListener {
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
 
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
