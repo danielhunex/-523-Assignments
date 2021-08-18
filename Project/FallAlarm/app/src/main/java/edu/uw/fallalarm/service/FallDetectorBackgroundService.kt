@@ -16,7 +16,6 @@ import android.location.LocationManager
 import android.os.*
 import android.telephony.SmsManager
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import edu.uw.fallalarm.database.AppDatabase
 import edu.uw.fallalarm.database.ContactRepository
