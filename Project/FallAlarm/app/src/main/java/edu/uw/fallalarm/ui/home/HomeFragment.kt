@@ -81,7 +81,7 @@ class HomeFragment : Fragment() {
                 val b: Bundle? = intent?.extras
                 val value = b?.getString("heartbeat")
                 binding.textHome.setBackgroundColor(Color.RED)
-                if (value != null && value == "1") {
+                if (value != null && value == "1" && _started) {
                     toggleStart(true)
                     Handler(Looper.getMainLooper()).postDelayed({
                         binding.textHome.setBackgroundColor(Color.GREEN)
