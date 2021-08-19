@@ -5,10 +5,11 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.AudioManager
+import android.media.ToneGenerator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
+import android.widget.*
 import androidx.core.view.isVisible
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -23,8 +24,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var _counter: Int = 0
     private var _gravity = FloatArray(3) { 0.0F }
     private var _linearAcceleration = FloatArray(3) { 0.0F }
-    private lateinit var _btnSave: Button
+    private lateinit var _btnStop: Button
     private var _shakingHappend = false
+    private lateinit var _radioGroupMode: RadioGroup
+    private lateinit var _numberPickerMax: NumberPicker
+    private var _isUserMode = false
+    private var _nmax: Int = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -32,21 +37,51 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         setContentView(R.layout.activity_main)
         _textViewCounter = findViewById(R.id.textview_counter)
         _textViewShake = findViewById(R.id.textview_shake)
-        _btnSave = findViewById(R.id.btn_save)
+        _btnStop = findViewById(R.id.btn_stop)
+        _radioGroupMode = findViewById(R.id.radiogroup_mode)
+        _numberPickerMax = findViewById(R.id.numberpicker_usermode)
+        _numberPickerMax.minValue = 0
+        _numberPickerMax.maxValue = 20000
+
+        //initially set to free mode
+        findViewById<RadioButton>(R.id.radiobutton_freemode).isChecked = true
+        _numberPickerMax.isEnabled= false
 
         _sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         _accelerometer = _sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         _sensorManager.registerListener(this, _accelerometer, SensorManager.SENSOR_DELAY_UI)
 
-        _btnSave.isEnabled = _shakingHappend
+        _btnStop.isEnabled = _shakingHappend
         _textViewShake.isVisible = !_shakingHappend
-        _btnSave.setOnClickListener()
+
+        _btnStop.setOnClickListener()
         {
-            _shakingHappend = false //stop counting
-            _counter = 0
-           _textViewShake.isVisible =!_shakingHappend
+            reset()
+        }
+
+        _radioGroupMode.setOnCheckedChangeListener { group, checkedId ->
+
+            var checkedId = group.checkedRadioButtonId
+
+            if (checkedId != -1) {
+                _numberPickerMax.isEnabled = checkedId == R.id.radiobutton_usermode
+                _isUserMode = checkedId == R.id.radiobutton_usermode
+                reset()
+            }
+        }
+        _numberPickerMax.setOnValueChangedListener { picker, oldVal, newVal ->
+            if (newVal >= 0) {
+                _nmax = newVal
+            }
         }
     }
+
+    fun reset() {
+        _shakingHappend = false //stop counting
+        _counter = 0
+        _textViewShake.isVisible = !_shakingHappend
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -81,8 +116,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 } else {
                     _prevMagnitude = magnitude
                 }
-                _btnSave.isEnabled = _shakingHappend
-                _textViewShake.isVisible= !_shakingHappend
+                _btnStop.isEnabled = _shakingHappend
+                _textViewShake.isVisible = !_shakingHappend
 
             } else
 
@@ -103,15 +138,31 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                                 _linearAcceleration[1].toDouble().pow(2.0) +
                                 _linearAcceleration[2].toDouble().pow(2.0)
                     )
-                    if (_prevMagnitude < 1.0 && magnitude > 1.5) { //I did sampling to find these thresholds over historical data I collected
-                        _counter++
+
+                    if (_isUserMode) {
+                        if (_counter < _nmax) {
+                            countStep(magnitude)
+
+                        } else {
+                            var toneGenerator = ToneGenerator(AudioManager.STREAM_ALARM, 100)
+                            toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 100)
+                            _shakingHappend = false
+                        }
+                    } else {
+                        countStep(magnitude)
                     }
-                    _prevMagnitude = magnitude
-                    _textViewCounter.text = _counter.toString()
+
                 }
         }
     }
 
+    fun countStep(magnitude: Double) {
+        if (_prevMagnitude < 1.0 && magnitude > 1.5) { //I did sampling to find these thresholds over historical data I collected
+            _counter++
+        }
+        _prevMagnitude = magnitude
+        _textViewCounter.text = _counter.toString()
+    }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
 
