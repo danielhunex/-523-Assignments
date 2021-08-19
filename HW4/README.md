@@ -10,7 +10,7 @@ HW4 is the app I wrote for the Homework 4. It has the following features.
 -Various screenshots are shown below
 
 ![Start](images/start.jpg)<br /> 
-App on start
+App on start. With User and free mode
 
 ![Step Counting](images/duringcount.jpg)<br /> 
 App during step counting with **stop** button enabled
